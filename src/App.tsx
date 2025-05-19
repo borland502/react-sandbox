@@ -88,7 +88,7 @@ const titleList = [
 	},
 ];
 
-function renderTitleList() {
+function List() {
 	return titleList.map((item) => (
 		<div key={item.objectId}>
 			<ul>
@@ -103,19 +103,26 @@ function renderTitleList() {
 	));
 }
 
+function Search() {
+	return (
+		<div>
+			<label htmlFor="search">Search: </label>
+			<input type="text" id="search" />
+		</div>
+	);
+}
+
 function App() {
 	return (
 		<div>
 			<h1>
 				{welcome.greeting} {welcome.title}
 			</h1>
-			<label htmlFor="search">Search: </label>
-			<input type="text" id="search" />
-
+			<Search />
 			<hr />
 
 			<ul>{renderFibonacci()}</ul>
-			<ul>{renderTitleList()}</ul>
+			<List />
 		</div>
 	);
 }
