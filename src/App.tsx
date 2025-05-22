@@ -1,3 +1,5 @@
+import React from "react";
+
 const welcome = {
 	greeting: "Hey",
 	title: "React",
@@ -47,15 +49,20 @@ const List = ({ list }: ListProps) =>
 	));
 
 const Search = () => {
+	const [searchTerm, setSearchTerm] = React.useState("");
+
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		console.log(event);
-		console.log(event.target.value);
+		setSearchTerm(event.target.value);
 	};
 
 	return (
 		<div>
 			<label htmlFor="search">Search: </label>
 			<input type="text" id="search" onChange={handleChange} />
+
+			<p>
+				Searching for: <strong>{searchTerm}</strong>
+			</p>
 		</div>
 	);
 };
