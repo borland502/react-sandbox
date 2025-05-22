@@ -102,12 +102,19 @@ const List = () =>
 		</div>
 	));
 
-const Search = () => (
-	<div>
-		<label htmlFor="search">Search: </label>
-		<input type="text" id="search" />
-	</div>
-);
+const Search = () => {
+	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		console.log(event);
+		console.log(event.target.value);
+	};
+
+	return (
+		<div>
+			<label htmlFor="search">Search: </label>
+			<input type="text" id="search" onChange={handleChange} />
+		</div>
+	);
+};
 
 const App = () => (
 	<div>
