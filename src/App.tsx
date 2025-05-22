@@ -48,11 +48,16 @@ const List = ({ list }: ListProps) =>
 		</div>
 	));
 
-const Search = () => {
+interface SearchProps {
+	onSearch: (event: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+const Search = ({ onSearch }: SearchProps) => {
 	const [searchTerm, setSearchTerm] = React.useState("");
 
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setSearchTerm(event.target.value);
+		onSearch(event);
 	};
 
 	return (
@@ -68,6 +73,10 @@ const Search = () => {
 };
 
 const App = () => {
+	const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+		console.log(event.target.value);
+	};
+
 	const titleList = [
 		{
 			objectId: 1,
@@ -140,7 +149,7 @@ const App = () => {
 			<h1>
 				{welcome.greeting} {welcome.title}
 			</h1>
-			<Search />
+			<Search onSearch={handleSearch} />
 			<hr />
 
 			<ul>{renderFibonacci()}</ul>
