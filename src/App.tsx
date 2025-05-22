@@ -88,8 +88,8 @@ const titleList = [
 	},
 ];
 
-function List() {
-	return titleList.map((item) => (
+const List = () =>
+	titleList.map((item) => (
 		<div key={item.objectId}>
 			<ul>
 				<li>
@@ -101,30 +101,25 @@ function List() {
 			</ul>
 		</div>
 	));
-}
 
-function Search() {
-	return (
-		<div>
-			<label htmlFor="search">Search: </label>
-			<input type="text" id="search" />
-		</div>
-	);
-}
+const Search = () => (
+	<div>
+		<label htmlFor="search">Search: </label>
+		<input type="text" id="search" />
+	</div>
+);
 
-function App() {
-	return (
-		<div>
-			<h1>
-				{welcome.greeting} {welcome.title}
-			</h1>
-			<Search />
-			<hr />
+const App = () => (
+	<div>
+		<h1>
+			{welcome.greeting} {welcome.title}
+		</h1>
+		<Search />
+		<hr />
 
-			<ul>{renderFibonacci()}</ul>
-			<List />
-		</div>
-	);
-}
+		<ul>{renderFibonacci()}</ul>
+		<List />
+	</div>
+);
 
 export default App;
