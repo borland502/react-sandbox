@@ -52,30 +52,15 @@ interface SearchProps {
 	onSearch: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const Search = ({ onSearch }: SearchProps) => {
-	const [searchTerm, setSearchTerm] = React.useState("");
-
-	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		setSearchTerm(event.target.value);
-		onSearch(event);
-	};
-
-	return (
-		<div>
-			<label htmlFor="search">Search: </label>
-			<input type="text" id="search" onChange={handleChange} />
-
-			<p>
-				Searching for: <strong>{searchTerm}</strong>
-			</p>
-		</div>
-	);
-};
+const Search = ({ onSearch }: SearchProps) => (
+	<div>
+		<label htmlFor="search">Search: </label>
+		<input type="text" id="search" onChange={onSearch} />
+	</div>
+);
 
 const App = () => {
-	const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-		console.log(event.target.value);
-	};
+	const [searchTerm, setSearchTerm] = React.useState("");
 
 	const titleList = [
 		{
@@ -144,6 +129,14 @@ const App = () => {
 		},
 	];
 
+	const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+		setSearchTerm(event.target.value);
+	};
+
+	const searchedStories = titleList.filter((story) =>
+		story.title.toLowerCase().includes(searchTerm.toLowerCase())
+	);
+
 	return (
 		<div>
 			<h1>
@@ -153,7 +146,7 @@ const App = () => {
 			<hr />
 
 			<ul>{renderFibonacci()}</ul>
-			<List list={titleList} />
+			<List list={searchedStories} />
 		</div>
 	);
 };
