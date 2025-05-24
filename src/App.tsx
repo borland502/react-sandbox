@@ -48,19 +48,19 @@ const List = ({ list }: ListProps) =>
 		</div>
 	));
 
-interface SearchProps {
+interface SearchProps extends Partial<HTMLInputElement> {
 	onSearch: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const Search = ({ onSearch }: SearchProps) => (
+const Search = ({ onSearch, value }: SearchProps) => (
 	<div>
 		<label htmlFor="search">Search: </label>
-		<input type="text" id="search" onChange={onSearch} />
+		<input type="text" id="search" value={value} onChange={onSearch}></input>
 	</div>
 );
 
 const App = () => {
-	const [searchTerm, setSearchTerm] = React.useState("");
+	const [searchTerm, setSearchTerm] = React.useState("React");
 
 	const titleList = [
 		{
