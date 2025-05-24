@@ -53,10 +53,10 @@ interface SearchProps extends Partial<HTMLInputElement> {
 }
 
 const Search = ({ onSearch, value }: SearchProps) => (
-	<div>
+	<>
 		<label htmlFor="search">Search: </label>
 		<input type="text" id="search" value={value} onChange={onSearch}></input>
-	</div>
+	</>
 );
 
 const App = () => {
