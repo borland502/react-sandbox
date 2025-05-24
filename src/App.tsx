@@ -60,12 +60,21 @@ const Search = ({ onSearch, value }: SearchProps) => (
 );
 
 const App = () => {
-	const [searchTerm, setSearchTerm] = React.useState(localStorage.getItem("search") || "React");
 
-	React.useEffect(() => {
-		localStorage.setItem("search", searchTerm);
-	}, [searchTerm]);
+	const useStorageState = (key: string, initialState: string): [string, React.Dispatch<React.SetStateAction<string>>] => {
+		const [value, setValue] = React.useState<string>(localStorage.getItem("search") || initialState);
 
+		React.useEffect(() => {
+			localStorage.setItem("value", key);
+	}, [value, key]);
+
+		return [value, setValue];
+
+	}; 
+
+
+	const [searchTerm, setSearchTerm] = useStorageState("search", "React");
+	
 	const titleList = [
 		{
 			objectId: 1,
