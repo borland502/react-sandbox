@@ -32,9 +32,9 @@ interface ListProps {
 		num_comments: number;
 		points: number;
 	}[];
+	onRemoveItem: (objectId: number) => void;
 }
-
-const List = ({ list }: ListProps) =>
+const List = ({ list, onRemoveItem }: ListProps) =>
 	list.map((item) => (
 		<div key={item.objectId}>
 			<ul>
@@ -43,14 +43,11 @@ const List = ({ list }: ListProps) =>
 					<span> by {item.author}</span>
 					<span> | {item.num_comments} comments</span>
 					<span> | {item.points} points</span>
+					<button onClick={() => onRemoveItem(item.objectId)}>Remove</button>
 				</li>
 			</ul>
 		</div>
 	));
-
-// interface SearchProps extends Partial<HTMLInputElement> {
-// 	onSearch: (event: React.ChangeEvent<HTMLInputElement>) => void;
-// }
 
 const InputWithLabel = ({
 	id,
@@ -76,13 +73,6 @@ const InputWithLabel = ({
 	</>
 );
 
-// const Search = ({ onSearch, value }: SearchProps) => (
-// 	<>
-// 		<label htmlFor="search">Search: </label>
-// 		<input type="text" id="search" value={value} onChange={onSearch}></input>
-// 	</>
-// );
-
 const App = () => {
 
 	const useStorageState = (key: string, initialState: string): [string, React.Dispatch<React.SetStateAction<string>>] => {
@@ -96,10 +86,7 @@ const App = () => {
 
 	}; 
 
-
-	const [searchTerm, setSearchTerm] = useStorageState("search", "React");
-	
-	const titleList = [
+	const initialTitleList = [
 		{
 			objectId: 1,
 			title: "React",
@@ -166,11 +153,22 @@ const App = () => {
 		},
 	];
 
+	const [searchTerm, setSearchTerm] = useStorageState("search", "");
+	const [stories, setStories] = React.useState(initialTitleList);
+
 	const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setSearchTerm(event.target.value);
 	};
 
-	const searchedStories = titleList.filter((story) =>
+	const handleRemovedStory = (objectId: number) => {
+		const updatedList = stories.filter(
+			(story) => story.objectId !== objectId
+		);
+
+		setStories(updatedList);
+	};
+
+	const searchedStories = stories.filter((story) =>
 		story.title.toLowerCase().includes(searchTerm.toLowerCase())
 	);
 
@@ -187,7 +185,7 @@ const App = () => {
 			<hr />
 
 			<ul>{renderFibonacci()}</ul>
-			<List list={searchedStories} />
+			<List list={searchedStories} onRemoveItem={handleRemovedStory} />
 		</div>
 	);
 };
