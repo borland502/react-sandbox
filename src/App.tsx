@@ -48,16 +48,40 @@ const List = ({ list }: ListProps) =>
 		</div>
 	));
 
-interface SearchProps extends Partial<HTMLInputElement> {
-	onSearch: (event: React.ChangeEvent<HTMLInputElement>) => void;
-}
+// interface SearchProps extends Partial<HTMLInputElement> {
+// 	onSearch: (event: React.ChangeEvent<HTMLInputElement>) => void;
+// }
 
-const Search = ({ onSearch, value }: SearchProps) => (
+const InputWithLabel = ({
+	id,
+	value,
+	onInputChange,
+	type = "text",
+	children,
+}: {
+	id: string;
+	value: string;
+	onInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+	type?: string;
+	children: React.ReactNode;
+}) => (
 	<>
-		<label htmlFor="search">Search: </label>
-		<input type="text" id="search" value={value} onChange={onSearch}></input>
+		<label htmlFor={id}>{children}</label>
+		<input
+			id={id}
+			type={type}
+			value={value}
+			onChange={onInputChange}
+		/>
 	</>
 );
+
+// const Search = ({ onSearch, value }: SearchProps) => (
+// 	<>
+// 		<label htmlFor="search">Search: </label>
+// 		<input type="text" id="search" value={value} onChange={onSearch}></input>
+// 	</>
+// );
 
 const App = () => {
 
@@ -155,7 +179,11 @@ const App = () => {
 			<h1>
 				{welcome.greeting} {welcome.title}
 			</h1>
-			<Search onSearch={handleSearch} />
+			<InputWithLabel
+				id="search"
+				value={searchTerm}
+				onInputChange={handleSearch}
+				><strong>Search: </strong></InputWithLabel>
 			<hr />
 
 			<ul>{renderFibonacci()}</ul>
