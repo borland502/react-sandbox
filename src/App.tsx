@@ -1,171 +1,71 @@
-import React from "react";
+import * as React from "react";
 
-const welcome = {
-	greeting: "Hey",
-	title: "React",
+type Story = {
+	objectID: number;
+	url: string;
+	title: string;
+	author: string;
+	num_comments: number;
+	points: number;
 };
 
-const fibIndex = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const initialStories = [
+	{
+		title: "React",
+		url: "https://reactjs.org/",
+		author: "Jordan Walke",
+		num_comments: 3,
+		points: 4,
+		objectID: 0,
+	},
+	{
+		title: "Redux",
+		url: "https://redux.js.org/",
+		author: "Dan Abramov, Andrew Clark",
+		num_comments: 2,
+		points: 5,
+		objectID: 1,
+	},
+];
 
-const fibonacci = (n: number): number => {
-	if (n <= 1) {
-		return n;
-	}
-	return fibonacci(n - 1) + fibonacci(n - 2);
-};
+const getAsyncStories = (): Promise<{ data: { stories: Story[] } }> =>
+	new Promise((resolve) =>
+		setTimeout(() => resolve({ data: { stories: initialStories } }), 2000)
+	);
 
-function renderFibonacci() {
-	const fibNumbers = fibIndex.map((idx) => fibonacci(idx));
-	return fibNumbers.map((num, idx) => (
-		<li key={idx}>
-			Fibonacci index {fibIndex[idx]} is {num}
-		</li>
-	));
-}
+const useStorageState = (key: string, initialState: string) => {
+	const [value, setValue] = React.useState(
+		localStorage.getItem(key) || initialState
+	);
 
-interface ListProps {
-	list: {
-		objectId: number;
-		title: string;
-		url: string;
-		author: string;
-		num_comments: number;
-		points: number;
-	}[];
-	onRemoveItem: (objectId: number) => void;
-}
-const List = ({ list, onRemoveItem }: ListProps) =>
-	list.map((item) => (
-		<div key={item.objectId}>
-			<ul>
-				<li>
-					<a href={item.url}>{item.title}</a>
-					<span> by {item.author}</span>
-					<span> | {item.num_comments} comments</span>
-					<span> | {item.points} points</span>
-					<button onClick={() => onRemoveItem(item.objectId)}>Remove</button>
-				</li>
-			</ul>
-		</div>
-	));
-
-const InputWithLabel = ({
-	id,
-	value,
-	onInputChange,
-	type = "text",
-	children,
-}: {
-	id: string;
-	value: string;
-	onInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-	type?: string;
-	children: React.ReactNode;
-}) => (
-	<>
-		<label htmlFor={id}>{children}</label>
-		<input
-			id={id}
-			type={type}
-			value={value}
-			onChange={onInputChange}
-		/>
-	</>
-);
-
-const App = () => {
-
-	const useStorageState = (key: string, initialState: string): [string, React.Dispatch<React.SetStateAction<string>>] => {
-		const [value, setValue] = React.useState<string>(localStorage.getItem("search") || initialState);
-
-		React.useEffect(() => {
-			localStorage.setItem("value", key);
+	React.useEffect(() => {
+		localStorage.setItem(key, value);
 	}, [value, key]);
 
-		return [value, setValue];
+	return [value, setValue] as const;
+};
 
-	}; 
+const App = () => {
+	const [searchTerm, setSearchTerm] = useStorageState("search", "React");
 
-	const initialTitleList = [
-		{
-			objectId: 1,
-			title: "React",
-			url: "https://reactjs.org/",
-			author: "Meta",
-			num_comments: 0,
-			points: 0,
-		},
-		{
-			objectId: 2,
-			title: "Angular",
-			url: "https://angular.io/",
-			author: "Google",
-			num_comments: 0,
-			points: 0,
-		},
-		{
-			objectId: 3,
-			title: "Vue",
-			url: "https://vuejs.org/",
-			author: "Evan You",
-			num_comments: 0,
-			points: 0,
-		},
-		{
-			objectId: 4,
-			title: "Svelte",
-			url: "https://svelte.dev/",
-			author: "Rich Harris",
-			num_comments: 0,
-			points: 0,
-		},
-		{
-			objectId: 5,
-			title: "Ember",
-			url: "https://emberjs.com/",
-			author: "Yehuda Katz",
-			num_comments: 0,
-			points: 0,
-		},
-		{
-			objectId: 6,
-			title: "Backbone",
-			url: "https://backbonejs.org/",
-			author: "Jeremy Ashkenas",
-			num_comments: 0,
-			points: 0,
-		},
-		{
-			objectId: 7,
-			title: "Preact",
-			url: "https://preactjs.com/",
-			author: "Jason Miller",
-			num_comments: 0,
-			points: 0,
-		},
-		{
-			objectId: 8,
-			title: "Inferno",
-			url: "https://infernojs.org/",
-			author: "Dominic Tarr",
-			num_comments: 0,
-			points: 0,
-		},
-	];
+	const [stories, setStories] = React.useState<Story[]>([]);
 
-	const [searchTerm, setSearchTerm] = useStorageState("search", "");
-	const [stories, setStories] = React.useState(initialTitleList);
+	React.useEffect(() => {
+		getAsyncStories().then((result) => {
+			setStories(result.data.stories);
+		});
+	}, []);
+
+	const handleRemoveStory = (item: Story) => {
+		const newStories = stories.filter(
+			(story) => item.objectID !== story.objectID
+		);
+
+		setStories(newStories);
+	};
 
 	const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setSearchTerm(event.target.value);
-	};
-
-	const handleRemovedStory = (objectId: number) => {
-		const updatedList = stories.filter(
-			(story) => story.objectId !== objectId
-		);
-
-		setStories(updatedList);
 	};
 
 	const searchedStories = stories.filter((story) =>
@@ -174,19 +74,96 @@ const App = () => {
 
 	return (
 		<div>
-			<h1>
-				{welcome.greeting} {welcome.title}
-			</h1>
+			<h1>My Hacker Stories</h1>
+
 			<InputWithLabel
 				id="search"
 				value={searchTerm}
+				isFocused
 				onInputChange={handleSearch}
-				><strong>Search: </strong></InputWithLabel>
+			>
+				<strong>Search:</strong>
+			</InputWithLabel>
+
 			<hr />
 
-			<ul>{renderFibonacci()}</ul>
-			<List list={searchedStories} onRemoveItem={handleRemovedStory} />
+			<List list={searchedStories} onRemoveItem={handleRemoveStory} />
 		</div>
 	);
 };
+
+type InputWithLabelProps = {
+	id: string;
+	value: string;
+	type?: string;
+	onInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+	isFocused: boolean;
+	children: React.ReactNode;
+};
+
+const InputWithLabel = ({
+	id,
+	value,
+	type = "text",
+	onInputChange,
+	isFocused,
+	children,
+}: InputWithLabelProps) => {
+	const inputRef = React.useRef<HTMLInputElement>(null);
+
+	React.useEffect(() => {
+		if (isFocused && inputRef.current) {
+			inputRef.current.focus();
+		}
+	}, [isFocused]);
+
+	return (
+		<>
+			<label htmlFor={id}>{children}</label>
+			&nbsp;
+			<input
+				ref={inputRef}
+				id={id}
+				type={type}
+				value={value}
+				onChange={onInputChange}
+			/>
+		</>
+	);
+};
+
+type ListProps = {
+	list: Story[];
+	onRemoveItem: (item: Story) => void;
+};
+
+const List = ({ list, onRemoveItem }: ListProps) => (
+	<ul>
+		{list.map((item) => (
+			<Item key={item.objectID} item={item} onRemoveItem={onRemoveItem} />
+		))}
+	</ul>
+);
+
+type ItemProps = {
+	item: Story;
+	onRemoveItem: (item: Story) => void;
+};
+
+const Item = ({ item, onRemoveItem }: ItemProps) => (
+	<li>
+		<span>
+			<a href={item.url}>{item.title}</a>
+		</span>
+		<span>{item.author}</span>
+		<span>{item.num_comments}</span>
+		<span>{item.points}</span>
+		<span>
+			<button type="button" onClick={() => onRemoveItem(item)}>
+				Dismiss
+			</button>
+		</span>
+	</li>
+);
+
 export default App;
